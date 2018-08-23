@@ -1,5 +1,14 @@
-//CURVE FITTING USING Least Squares method, solving linear equation using Cramer's Rule
-/*Matrix Helper Functions*/
+/*
+  curveFitting.h - Library for fitting curves to given
+  points using Least Squares method, with Cramer's rule
+  used to solve the linear equation. Max polynomial order 20.
+  Created by Rowan Easter-Robinson, August 23, 2018.
+  Released into the public domain.
+*/
+
+#include <Arduino.h>
+#include "curveFitting.h"
+
 void printMat(const char *s, double*m, int n){
   Serial.println(s);
   for (int i = 0; i < n; i++) {
@@ -92,18 +101,17 @@ double power(double base, int exponent){
   }
 }
 
-// should be declared like that to optimize for the 8bits microcontroller core.
-void fitCurve (uint8_t order, int N_points, double px[], double py[], double *coeffs) {
-  uint8_t nCoeffs = order + 1; // no of coefficients is one larger than the order of the equation
-  uint8_t maxOrder = 20;
-  if(nCoeffs > maxOrder || nCoeffs < 1) return; //matrix memory hard coded for max of 20 order, which is huge
+int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
+  uint8_t maxOrder = MAX_ORDER;
+  if (nCoeffs != order + 1) return -1; // no of coefficients is one larger than the order of the equation
+  if(nCoeffs > maxOrder || nCoeffs < 1) return -2; //matrix memory hard coded for max of 20 order, which is huge
   int i, j;
   double T[maxOrder] = {0}; //Values to generate RHS of linear equation
   double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
   int x, y;
   
-  for (i=0; i<N_points; i++) {//Generate matrix elements
+  for (i=0; i<nPoints; i++) {//Generate matrix elements
     x = px[i];
     y = py[i];
     for (j = 0; j < (nCoeffs*2)-1; j++){
@@ -132,30 +140,5 @@ void fitCurve (uint8_t order, int N_points, double px[], double py[], double *co
     coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
+  return 0;
 }
-
-void setup(){
-  Serial.begin(9600);
-  while(!Serial);
-  Serial.println("Starting");
-  Serial.println("Fitting Curve");
-  double x[26];
-  double t[26];
-  for (int i = 0; i < sizeof(x)/sizeof(double); i++){
-    t[i] = i;
-    x[i] = power(i, 5);
-  }
-  double coeffs[4];
-  fitCurve(3, sizeof(x)/sizeof(double), t, x, coeffs);
-  uint8_t c = 'a';
-  for (int i = 0; i < sizeof(coeffs)/sizeof(double); i++){
-    Serial.printf("%c=%f\t ",c++, coeffs[i]);
-  }
-}
-
-
-
-void loop(){
-  
-}
-
