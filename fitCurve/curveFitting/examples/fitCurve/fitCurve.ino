@@ -1,4 +1,4 @@
-#include "curveFitting.h"
+#include <curveFitting.h>
 
 void setup(){
   Serial.begin(9600);
