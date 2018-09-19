@@ -142,3 +142,50 @@ int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, dou
   }
   return 0;
 }
+
+int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) {
+  uint8_t maxOrder = MAX_ORDER;
+  if (nCoeffs != order + 1) return -1; // no of coefficients is one larger than the order of the equation
+  if(nCoeffs > maxOrder || nCoeffs < 1) return -2; //matrix memory hard coded for max of 20 order, which is huge
+  int i, j;
+  double T[maxOrder] = {0}; //Values to generate RHS of linear equation
+  double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
+  double denom; //denominator for Cramer's rule, determinant of LHS linear equation
+  int x, y;
+  
+  double px[nPoints];
+  for (i=0; i<nPoints; i++){
+	px[i] = i;
+  }
+  
+  for (i=0; i<nPoints; i++) {//Generate matrix elements
+    x = px[i];
+    y = py[i];
+    for (j = 0; j < (nCoeffs*2)-1; j++){
+      S[j] += power(x, j); // x^j iterated , S10 S20 S30 etc, x^0, x^1...
+    }
+    for (j = 0; j < nCoeffs; j++){
+      T[j] += y * power(x, j); //y * x^j iterated, S01 S11 S21 etc, x^0*y, x^1*y, x^2*y...
+    }
+  }
+
+  double masterMat[nCoeffs*nCoeffs]; //Master matrix LHS of linear equation
+  for (i = 0; i < nCoeffs ;i++){//index by matrix row each time
+    for (j = 0; j < nCoeffs; j++){//index within each row
+      masterMat[i*nCoeffs+j] = S[i+j];
+    }
+  }
+  
+  double mat[nCoeffs*nCoeffs]; //Temp matrix as det() method alters the matrix given
+  cpyArray(masterMat, mat, nCoeffs);
+  denom = det(mat, nCoeffs, 0);
+  cpyArray(masterMat, mat, nCoeffs);
+
+  //Generate cramers rule mats
+  for (i = 0; i < nCoeffs; i++){ //Temporary matrix to substitute RHS of linear equation as per Cramer's rule
+    subCol(mat, T, i, nCoeffs);
+    coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
+    cpyArray(masterMat, mat, nCoeffs);
+  }
+  return 0;
+}

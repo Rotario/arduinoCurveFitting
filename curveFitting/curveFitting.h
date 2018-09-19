@@ -23,4 +23,5 @@ int trianglize(double **m, int n);
 double det(double *in, int n, uint8_t prnt);
 /* Curve fitting function */
 int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs);
+int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs);
 #endif
