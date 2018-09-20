@@ -11,7 +11,15 @@
 
 #include <Arduino.h>
 #define MAX_ORDER 20;
-/*Matrix Helper Functions*/
+
+/* Enum for error messages */
+enum curveFitERROR{
+	ORDER_AND_NCOEFFS_DOES_NOT_MATCH = -1,
+	ORDER_INCORRECT = -2,
+	NPOINTS_INCORRECT = -3
+};
+
+/* Matrix Helper Functions */
 void printMat(const char *s, double*m, int n);
 void showmat(const char *s, double **m, int n);
 void cpyArray(double *src, double*dest, int n);
@@ -21,7 +29,8 @@ double power(double base, int exponent);
 /* Determinant matrix functions */
 int trianglize(double **m, int n);
 double det(double *in, int n, uint8_t prnt);
-/* Curve fitting function */
-int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs);
+
+/* Curve fitting functions */
 int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs);
+int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs);
 #endif

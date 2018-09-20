@@ -87,10 +87,10 @@ double det(double *in, int n, uint8_t prnt)
 /*End of Determinant algorithm*/
 
 //Raise x to power
-double power(double base, int exponent){
+double curveFitPower(double base, int exponent){
   if (exponent == 0){
     return 1;
-  } else if (exponent == 1){
+  } else if (exponent == 1){ //not needed? handled in for loop easy test
     return base;
   } else {
     double val = base;
@@ -101,24 +101,30 @@ double power(double base, int exponent){
   }
 }
 
-int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
+int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) {
   uint8_t maxOrder = MAX_ORDER;
-  if (nCoeffs != order + 1) return -1; // no of coefficients is one larger than the order of the equation
-  if(nCoeffs > maxOrder || nCoeffs < 1) return -2; //matrix memory hard coded for max of 20 order, which is huge
+  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DOES_NOT_MATCH; 	// no of coefficients is one larger than the order of the equation
+  if (nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//matrix memory hard coded for max of 20 order, which is huge
+  if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
   double T[maxOrder] = {0}; //Values to generate RHS of linear equation
   double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
   int x, y;
   
+  double px[nPoints]; //Generate X values, from 0 to n
+  for (i=0; i<nPoints; i++){
+	px[i] = i;
+  }
+  
   for (i=0; i<nPoints; i++) {//Generate matrix elements
     x = px[i];
     y = py[i];
     for (j = 0; j < (nCoeffs*2)-1; j++){
-      S[j] += power(x, j); // x^j iterated , S10 S20 S30 etc, x^0, x^1...
+      S[j] += curveFitPower(x, j); // x^j iterated , S10 S20 S30 etc, x^0, x^1...
     }
     for (j = 0; j < nCoeffs; j++){
-      T[j] += y * power(x, j); //y * x^j iterated, S01 S11 S21 etc, x^0*y, x^1*y, x^2*y...
+      T[j] += y * curveFitPower(x, j); //y * x^j iterated, S01 S11 S21 etc, x^0*y, x^1*y, x^2*y...
     }
   }
 
@@ -143,29 +149,25 @@ int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, dou
   return 0;
 }
 
-int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) {
+int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
   uint8_t maxOrder = MAX_ORDER;
-  if (nCoeffs != order + 1) return -1; // no of coefficients is one larger than the order of the equation
-  if(nCoeffs > maxOrder || nCoeffs < 1) return -2; //matrix memory hard coded for max of 20 order, which is huge
+  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DOES_NOT_MATCH; 	//Number of coefficients is one larger than the order of the equation
+  if(nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//Matrix memory hard coded for max of 20 order, which is huge
+  if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
   double T[maxOrder] = {0}; //Values to generate RHS of linear equation
   double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
   int x, y;
   
-  double px[nPoints];
-  for (i=0; i<nPoints; i++){
-	px[i] = i;
-  }
-  
   for (i=0; i<nPoints; i++) {//Generate matrix elements
     x = px[i];
     y = py[i];
     for (j = 0; j < (nCoeffs*2)-1; j++){
-      S[j] += power(x, j); // x^j iterated , S10 S20 S30 etc, x^0, x^1...
+      S[j] += curveFitPower(x, j); // x^j iterated , S10 S20 S30 etc, x^0, x^1...
     }
     for (j = 0; j < nCoeffs; j++){
-      T[j] += y * power(x, j); //y * x^j iterated, S01 S11 S21 etc, x^0*y, x^1*y, x^2*y...
+      T[j] += y * curveFitPower(x, j); //y * x^j iterated, S01 S11 S21 etc, x^0*y, x^1*y, x^2*y...
     }
   }
 
