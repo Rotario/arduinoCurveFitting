@@ -1,2 +1,1 @@
 fitCurve	KEYWORD2
-power	KEYWORD2

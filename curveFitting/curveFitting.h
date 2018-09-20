@@ -24,7 +24,7 @@ void printMat(const char *s, double*m, int n);
 void showmat(const char *s, double **m, int n);
 void cpyArray(double *src, double*dest, int n);
 void subCol(double *mat, double* sub, uint8_t coln, uint8_t n);
-double power(double base, int exponent);
+double curveFitPower(double base, int exponent);
 
 /* Determinant matrix functions */
 int trianglize(double **m, int n);

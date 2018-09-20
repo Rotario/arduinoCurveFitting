@@ -90,8 +90,6 @@ double det(double *in, int n, uint8_t prnt)
 double curveFitPower(double base, int exponent){
   if (exponent == 0){
     return 1;
-  } else if (exponent == 1){ //not needed? handled in for loop easy test
-    return base;
   } else {
     double val = base;
     for (int i = 1; i < exponent; i++){
@@ -146,7 +144,7 @@ int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) 
     coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
-  return 0;
+  return 1;
 }
 
 int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
@@ -189,5 +187,5 @@ int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, dou
     coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
-  return 0;
+  return 1;
 }
