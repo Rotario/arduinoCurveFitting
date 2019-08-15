@@ -144,7 +144,7 @@ int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) 
     coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
-  return 1;
+  return 0;
 }
 
 int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
