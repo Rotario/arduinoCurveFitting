@@ -10,11 +10,15 @@
 #define curveFit_h
 
 #include <Arduino.h>
-#define MAX_ORDER 20;
+#define MAX_ORDER 20
+
+#ifndef CURVE_FIT_DEBUG
+#define CURVE_FIT_DEBUG 0
+#endif
 
 /* Enum for error messages */
 enum curveFitERROR{
-	ORDER_AND_NCOEFFS_DOES_NOT_MATCH = -1,
+	ORDER_AND_NCOEFFS_DO_NOT_MATCH = -1,
 	ORDER_INCORRECT = -2,
 	NPOINTS_INCORRECT = -3
 };

@@ -11,9 +11,11 @@
 
 void printMat(const char *s, double*m, int n){
   Serial.println(s);
+  char buf[40];
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
-      Serial.printf("%30.2f\t", m[i*n+j]);
+      snprintf(buf, 40, "%30.4f\t", m[i*n+j]);
+      Serial.print(buf);
     }
     Serial.println();
   }
@@ -21,9 +23,11 @@ void printMat(const char *s, double*m, int n){
 
 void showmat(const char *s, double **m, int n){
   Serial.println(s);
+  char buf[40];
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++){
-      Serial.printf("%30.2f\t", m[i][j]);
+      snprintf(buf, 40, "%30.4f\t", m[i][j]);
+      Serial.print(buf);
     }
     Serial.println();
   }
@@ -101,14 +105,14 @@ double curveFitPower(double base, int exponent){
 
 int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) {
   uint8_t maxOrder = MAX_ORDER;
-  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DOES_NOT_MATCH; 	// no of coefficients is one larger than the order of the equation
+  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DO_NOT_MATCH; 	// no of coefficients is one larger than the order of the equation
   if (nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//matrix memory hard coded for max of 20 order, which is huge
   if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
   double T[maxOrder] = {0}; //Values to generate RHS of linear equation
   double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
-  int x, y;
+  double x, y;
   
   double px[nPoints]; //Generate X values, from 0 to n
   for (i=0; i<nPoints; i++){
@@ -135,13 +139,13 @@ int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) 
   
   double mat[nCoeffs*nCoeffs]; //Temp matrix as det() method alters the matrix given
   cpyArray(masterMat, mat, nCoeffs);
-  denom = det(mat, nCoeffs, 0);
+  denom = det(mat, nCoeffs, CURVE_FIT_DEBUG);
   cpyArray(masterMat, mat, nCoeffs);
 
   //Generate cramers rule mats
   for (i = 0; i < nCoeffs; i++){ //Temporary matrix to substitute RHS of linear equation as per Cramer's rule
     subCol(mat, T, i, nCoeffs);
-    coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
+    coeffs[nCoeffs-i-1] = det(mat, nCoeffs, CURVE_FIT_DEBUG)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
   return 0;
@@ -149,14 +153,14 @@ int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) 
 
 int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, double *coeffs) {
   uint8_t maxOrder = MAX_ORDER;
-  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DOES_NOT_MATCH; 	//Number of coefficients is one larger than the order of the equation
+  if (nCoeffs != order + 1) return ORDER_AND_NCOEFFS_DO_NOT_MATCH; 	//Number of coefficients is one larger than the order of the equation
   if(nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//Matrix memory hard coded for max of 20 order, which is huge
   if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
   double T[maxOrder] = {0}; //Values to generate RHS of linear equation
   double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
-  int x, y;
+  double x, y;
   
   for (i=0; i<nPoints; i++) {//Generate matrix elements
     x = px[i];
@@ -178,13 +182,13 @@ int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, dou
   
   double mat[nCoeffs*nCoeffs]; //Temp matrix as det() method alters the matrix given
   cpyArray(masterMat, mat, nCoeffs);
-  denom = det(mat, nCoeffs, 0);
+  denom = det(mat, nCoeffs, CURVE_FIT_DEBUG);
   cpyArray(masterMat, mat, nCoeffs);
 
   //Generate cramers rule mats
   for (i = 0; i < nCoeffs; i++){ //Temporary matrix to substitute RHS of linear equation as per Cramer's rule
     subCol(mat, T, i, nCoeffs);
-    coeffs[nCoeffs-i-1] = det(mat, nCoeffs, 0)/denom; //Coefficients are det(M_i)/det(Master)
+    coeffs[nCoeffs-i-1] = det(mat, nCoeffs, CURVE_FIT_DEBUG)/denom; //Coefficients are det(M_i)/det(Master)
     cpyArray(masterMat, mat, nCoeffs);
   }
   return 0;
