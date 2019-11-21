@@ -5,15 +5,17 @@ void setup(){
   while(!Serial);
   Serial.println("Starting");
   
+  char buf[100];
   int xpower = 3;
   int order = 3;
-  Serial.printf("Fitting curve of order %i to data of power %i...\n", order, xpower);
+  snprintf(buf, 100, "Fitting curve of order %i to data of power %i...\n", order, xpower);
+  Serial.print(buf);
   
   double x[26];
   double t[26];
   for (int i = 0; i < sizeof(x)/sizeof(double); i++){
     t[i] = i;
-    x[i] = power(i, xpower);
+    x[i] = pow(i, xpower);
   }
   
   double coeffs[order+1];
@@ -23,11 +25,11 @@ void setup(){
     uint8_t c = 'a';
     Serial.println("Coefficients are");
     for (int i = 0; i < sizeof(coeffs)/sizeof(double); i++){
-      Serial.printf("%c=%f\t ",c++, coeffs[i]);
+      snprintf(buf, 100, "%c=%f\t ",c++, coeffs[i]);
+      Serial.print(buf);
     }
   }
 }
 
 void loop(){
 }
-
