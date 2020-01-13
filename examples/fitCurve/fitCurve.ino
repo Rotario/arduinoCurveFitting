@@ -25,8 +25,10 @@ void setup(){
     uint8_t c = 'a';
     Serial.println("Coefficients are");
     for (int i = 0; i < sizeof(coeffs)/sizeof(double); i++){
-      snprintf(buf, 100, "%c=%f\t ",c++, coeffs[i]);
+      snprintf(buf, 100, "%c=",c++);
       Serial.print(buf);
+      Serial.print(coeffs[i]);
+      Serial.print('\t');
     }
   }
 }
