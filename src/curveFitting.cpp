@@ -109,8 +109,8 @@ int fitCurve (int order, int nPoints, double py[], int nCoeffs, double *coeffs) 
   if (nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//matrix memory hard coded for max of 20 order, which is huge
   if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
-  double T[maxOrder] = {0}; //Values to generate RHS of linear equation
-  double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
+  double T[MAX_ORDER] = {0}; //Values to generate RHS of linear equation
+  double S[MAX_ORDER*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
   double x, y;
   
@@ -157,8 +157,8 @@ int fitCurve (int order, int nPoints, double px[], double py[], int nCoeffs, dou
   if(nCoeffs > maxOrder || nCoeffs < 2) return ORDER_INCORRECT; 		//Matrix memory hard coded for max of 20 order, which is huge
   if (nPoints < 1) return NPOINTS_INCORRECT; 							//Npoints needs to be positive and nonzero
   int i, j;
-  double T[maxOrder] = {0}; //Values to generate RHS of linear equation
-  double S[maxOrder*2+1] = {0}; //Values for LHS and RHS of linear equation
+  double T[MAX_ORDER] = {0}; //Values to generate RHS of linear equation
+  double S[MAX_ORDER*2+1] = {0}; //Values for LHS and RHS of linear equation
   double denom; //denominator for Cramer's rule, determinant of LHS linear equation
   double x, y;
   
